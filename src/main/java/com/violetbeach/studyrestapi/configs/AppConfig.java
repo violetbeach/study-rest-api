@@ -1,8 +1,10 @@
 package com.violetbeach.studyrestapi.configs;
 
 import com.violetbeach.studyrestapi.accounts.Account;
+import com.violetbeach.studyrestapi.accounts.AccountRepository;
 import com.violetbeach.studyrestapi.accounts.AccountRole;
 import com.violetbeach.studyrestapi.accounts.AccountService;
+import com.violetbeach.studyrestapi.common.AppProperties;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.ApplicationArguments;
@@ -34,14 +36,24 @@ public class AppConfig {
             @Autowired
             AccountService accountService;
 
+            @Autowired
+            AppProperties appProperties;
+
             @Override
             public void run(ApplicationArguments args) throws Exception {
-                Account account = Account.builder()
-                        .email("ti6419@gmail.com")
-                        .password("violetbeach")
+                Account admin = Account.builder()
+                        .email(appProperties.getAdminUsername())
+                        .password(appProperties.getAdminPassword())
                         .roles(Set.of(AccountRole.ADMIN, AccountRole.USER))
                         .build();
-                accountService.saveAccount(account);
+                accountService.saveAccount(admin);
+
+                Account user = Account.builder()
+                        .email(appProperties.getUserUsername())
+                        .password(appProperties.getUserPassword())
+                        .roles(Set.of(AccountRole.USER))
+                        .build();
+                accountService.saveAccount(user);
             }
         };
     }
